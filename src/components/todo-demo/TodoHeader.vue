@@ -1,19 +1,29 @@
 <template>
   <div class="todo-header">
     <input type="text"
+           @keyup.enter="add"
            placeholder="请输入你的任务名称，按回车确认"/>
   </div>
 </template>
 
 <script>
+import {nanoid} from 'nanoid'
+
 export default {
-  name: "TodoHeader"
+  name: "TodoHeader",
+  methods: {
+    add(e) {
+      if (e.target.value.trim() === '') return
+      this.$emit('addTodo', {id: nanoid(), title: e.target.value, done: false})
+      e.target.value = ''
+    }
+  }
 }
 </script>
 
-<style  scoped>
+<style scoped>
 
-.todo-header input{
+.todo-header input {
   width: 560px;
   height: 28px;
   font-size: 14px;

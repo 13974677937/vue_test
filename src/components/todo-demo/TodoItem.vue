@@ -1,20 +1,36 @@
 <template>
   <li>
     <label>
-      <input type="checkbox"/>
-      <span>Todo Something</span>
+      <input type="checkbox"
+             :checked="todo.done"
+             @change="handleChange(todo.id)"/>
+      <span>{{ todo.title }}</span>
     </label>
-    <button class="btn btn-danger" style="display: none">删除</button>
+    <button class="btn btn-danger"
+            @click="handleDelete(todo.id)"
+    >删除
+    </button>
   </li>
 </template>
 
 <script>
 export default {
-  name: "TodoItem"
+  name: "TodoItem",
+  props: ['todo'],
+  methods: {
+    handleChange(id) {
+      this.$emit('changTodo', id)
+    },
+    handleDelete(id){
+      if(confirm('确定删除吗？')){
+        this.$emit('delTodo', id)
+      }
+    }
+  }
 }
 </script>
 
-<style  scoped>
+<style lang="less" scoped>
 li {
   list-style: none;
   height: 36px;
@@ -47,5 +63,11 @@ li:before {
 
 li:last-child {
   border-bottom: none;
+}
+li:hover {
+  background: #ddd;
+  button{
+    display: block;
+  }
 }
 </style>

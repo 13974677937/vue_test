@@ -1,9 +1,14 @@
 <template>
   <div class="todo-container">
     <div class="todo-warp">
-      <TodoHeader/>
-      <TodoList/>
-      <TodoFooter/>
+      <TodoHeader @addTodo="addTodo"/>
+      <TodoList :todos="todos"
+                @checkTodo="checkTodo"
+                @deleteTodo="deleteTodo"/>
+      <TodoFooter v-if="todos.length > 0"
+                  @checkAll="checkAll"
+                  @clearAll="clearAll"
+                  :todos="todos"/>
     </div>
   </div>
 </template>
@@ -15,12 +20,41 @@ import TodoFooter from "@/components/todo-demo/TodoFooter";
 
 export default {
   name: "TodoDemo",
-  components: {TodoHeader, TodoList, TodoFooter}
+  components: {TodoHeader, TodoList, TodoFooter},
+  data() {
+    return {
+      todos: [
+        {id: '001', title: '吃饭', done: true},
+        {id: '002', title: '睡觉', done: false},
+        {id: '003', title: '玩耍', done: true},
+      ]
+    }
+  },
+  methods: {
+    // 添加一个TODO
+    addTodo(obj) {
+      this.todos.unshift(obj)
+    },
+    // 选择或取消选择
+    checkTodo(id) {
+      this.todos.forEach(item => {
+        if (item.id === id) item.done = !item.done
+      })
+    },
+    deleteTodo(id) {
+      this.todos = this.todos.filter(todo => todo.id !== id)
+    },
+    checkAll(e) {
+      this.todos.forEach(item => item.done = e)
+    },
+    clearAll() {
+      this.todos = this.todos.filter(todo => !todo.done)
+    }
+  }
 }
 </script>
 
 <style scoped>
-@import url(./main.css);
 .todo-container {
   width: 600px;
   margin: 0 auto;
@@ -30,5 +64,37 @@ export default {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
+}
+
+/deep/ body {
+  background: #fff;
+}
+
+/deep/ .btn {
+  display: none;
+  padding: 4px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+/deep/ .btn-danger {
+  color: #fff;
+  background-color: #da4f49;
+  border: 1px solid #bd363f;
+}
+
+/deep/ .btn-danger:hover {
+  color: #fff;
+  background-color: #bd363f;
+}
+
+/deep/ .btn:focus {
+  outline: none;
 }
 </style>

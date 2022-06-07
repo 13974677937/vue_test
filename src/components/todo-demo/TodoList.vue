@@ -1,6 +1,10 @@
 <template>
   <ul class="todo-main">
-    <TodoItem/>
+    <TodoItem v-for="item in todos"
+              :key="item.id"
+              :todo="item"
+              @changTodo="changTodo"
+              @delTodo="delTodo"/>
   </ul>
 </template>
 
@@ -9,11 +13,20 @@ import TodoItem from "@/components/todo-demo/TodoItem";
 
 export default {
   name: "TodoList",
-  components: {TodoItem}
+  components: {TodoItem},
+  props: ['todos'],
+  methods: {
+    changTodo(id) {
+      this.$emit('checkTodo', id)
+    },
+    delTodo(id){
+      this.$emit('deleteTodo', id)
+    }
+  }
 }
 </script>
 
-<style  scoped>
+<style scoped>
 .todo-main {
   margin-left: 0;
   border: 1px solid #ddd;
