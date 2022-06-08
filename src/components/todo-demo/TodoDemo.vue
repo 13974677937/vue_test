@@ -23,11 +23,7 @@ export default {
   components: {TodoHeader, TodoList, TodoFooter},
   data() {
     return {
-      todos: [
-        {id: '001', title: '吃饭', done: true},
-        {id: '002', title: '睡觉', done: false},
-        {id: '003', title: '玩耍', done: true},
-      ]
+      todos: []
     }
   },
   methods: {
@@ -50,6 +46,18 @@ export default {
     clearAll() {
       this.todos = this.todos.filter(todo => !todo.done)
     }
+  },
+  watch: {
+    todos: {
+      handler(value) {
+        localStorage.setItem('todos', JSON.stringify(value))
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    // 从localStorage中取出 todos 数组，若为 null 则默认值为 []
+    this.todos = JSON.parse(localStorage.getItem('todos')) || []
   }
 }
 </script>
