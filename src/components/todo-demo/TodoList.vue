@@ -2,9 +2,7 @@
   <ul class="todo-main">
     <TodoItem v-for="item in todos"
               :key="item.id"
-              :todo="item"
-              @changTodo="changTodo"
-              @delTodo="delTodo"/>
+              :todo="item"/>
   </ul>
 </template>
 
@@ -15,14 +13,6 @@ export default {
   name: "TodoList",
   components: {TodoItem},
   props: ['todos'],
-  methods: {
-    changTodo(id) {
-      this.$emit('checkTodo', id)
-    },
-    delTodo(id){
-      this.$emit('deleteTodo', id)
-    }
-  }
 }
 </script>
 

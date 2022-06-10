@@ -1,30 +1,55 @@
 <template>
-  <li>
-    <label>
-      <input type="checkbox"
-             :checked="todo.done"
-             @change="handleChange(todo.id)"/>
-      <span>{{ todo.title }}</span>
-    </label>
-    <button class="btn btn-danger"
-            @click="handleDelete(todo.id)"
-    >删除
-    </button>
-  </li>
+  <transition appear
+              name="todo">
+    <li>
+      <label>
+        <input type="checkbox"
+               :checked="todo.done"
+               @change="handleChange(todo.id)"/>
+        <span v-show="!todo.isEdit">{{ todo.title }}</span>
+        <input type="text"
+               ref="inputTitle"
+               v-show="todo.isEdit"
+               :value="todo.title"
+               @blur="handleBlur(todo,$event)"/>
+      </label>
+      <button class="btn btn-danger"
+              @click="handleDelete(todo.id)"
+      >删除
+      </button>
+      <button class="btn btn-edit"
+              v-show="!todo.isEdit"
+              @click="handleEdit(todo)"
+      >编辑
+      </button>
+    </li>
+  </transition>
 </template>
 
 <script>
+import 'animate.css'
+
 export default {
   name: "TodoItem",
   props: ['todo'],
   methods: {
     handleChange(id) {
-      this.$emit('changTodo', id)
+      this.$bus.$emit('checkTodo', id)
     },
-    handleDelete(id){
-      if(confirm('确定删除吗？')){
-        this.$emit('delTodo', id)
+    handleDelete(id) {
+      if (confirm('确定删除吗？')) {
+        this.$bus.$emit('deleteTodo', id)
       }
+    },
+    handleEdit(todo) {
+      todo.isEdit = true
+      this.$nextTick(() => {
+        this.$refs.inputTitle.focus()
+      })
+    },
+    handleBlur(todo, e) {
+      todo.isEdit = false
+      this.$bus.$emit('editTodo', todo.id, e.target.value)
     }
   }
 }
@@ -64,10 +89,29 @@ li:before {
 li:last-child {
   border-bottom: none;
 }
+
 li:hover {
   background: #ddd;
-  button{
+
+  button {
     display: block;
+  }
+}
+
+.todo-enter-active {
+  animation: todo 1s;
+}
+
+.todo-leave-active {
+  animation: todo 1s reverse;
+}
+
+@keyframes todo {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0px);
   }
 }
 </style>

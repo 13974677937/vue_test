@@ -14,7 +14,7 @@ export default {
   methods: {
     add(e) {
       if (e.target.value.trim() === '') return
-      this.$emit('addTodo', {id: nanoid(), title: e.target.value, done: false})
+      this.$emit('addTodo', {id: nanoid(), title: e.target.value, done: false, isEdit: false})
       e.target.value = ''
     }
   }

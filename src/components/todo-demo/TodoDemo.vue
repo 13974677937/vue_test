@@ -1,10 +1,8 @@
 <template>
   <div class="todo-container">
     <div class="todo-warp">
-      <TodoHeader @addTodo="addTodo"/>
-      <TodoList :todos="todos"
-                @checkTodo="checkTodo"
-                @deleteTodo="deleteTodo"/>
+      <TodoHeader ref="TodoHeader"/>
+      <TodoList :todos="todos"/>
       <TodoFooter v-if="todos.length > 0"
                   @checkAll="checkAll"
                   @clearAll="clearAll"
@@ -37,6 +35,14 @@ export default {
         if (item.id === id) item.done = !item.done
       })
     },
+    editTodo(id, value) {
+      if(value.trim() === '') return alert('输入不能为空！')
+      this.todos.forEach(item => {
+        if (item.id === id) {
+          item.title = value
+        }
+      })
+    },
     deleteTodo(id) {
       this.todos = this.todos.filter(todo => todo.id !== id)
     },
@@ -58,6 +64,18 @@ export default {
   mounted() {
     // 从localStorage中取出 todos 数组，若为 null 则默认值为 []
     this.todos = JSON.parse(localStorage.getItem('todos')) || []
+    // 用 $refs 自定义事件
+    this.$refs.TodoHeader.$on('addTodo', this.addTodo)
+    // 在全局事件总线上添加事件和回调
+    this.$bus.$on('checkTodo', this.checkTodo)
+    this.$bus.$on('deleteTodo', this.deleteTodo)
+    this.$bus.$on('editTodo', this.editTodo)
+  },
+  beforeDestroy() {
+    // 在组件销毁前，解绑 绑定的事件
+    this.$bus.$off('checkTodo')
+    this.$bus.$off('deleteTodo')
+    this.$bus.$off('editTodo')
   }
 }
 </script>
@@ -95,6 +113,13 @@ export default {
   color: #fff;
   background-color: #da4f49;
   border: 1px solid #bd363f;
+}
+
+/deep/ .btn-edit {
+  color: #fff;
+  background-color: skyblue;
+  border: 1px solid rgb(103, 159, 180);
+  margin-right: 5px;
 }
 
 /deep/ .btn-danger:hover {
